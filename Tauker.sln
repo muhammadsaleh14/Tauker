@@ -5,7 +5,9 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaukerHybrid", "TaukerHybrid\TaukerHybrid.csproj", "{8159FF95-2446-4464-B62A-2EC6870F7C05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RazorClassLibrary", "RazorClassLibrary\RazorClassLibrary.csproj", "{490E1882-80DB-41E5-9BF8-7D1E9C9B4CF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorClassLibrary", "RazorClassLibrary\RazorClassLibrary.csproj", "{490E1882-80DB-41E5-9BF8-7D1E9C9B4CF7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "WebApii\WebApi.csproj", "{F5E42B72-4FEB-4049-8579-4C9DFBB58267}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{490E1882-80DB-41E5-9BF8-7D1E9C9B4CF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{490E1882-80DB-41E5-9BF8-7D1E9C9B4CF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{490E1882-80DB-41E5-9BF8-7D1E9C9B4CF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5E42B72-4FEB-4049-8579-4C9DFBB58267}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5E42B72-4FEB-4049-8579-4C9DFBB58267}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5E42B72-4FEB-4049-8579-4C9DFBB58267}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5E42B72-4FEB-4049-8579-4C9DFBB58267}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
