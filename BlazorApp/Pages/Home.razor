@@ -1,0 +1,88 @@
+﻿@page "/"
+@using Grpc.Core
+@using GrpcService.SharedProtos
+
+@inject Audio.AudioClient AudioServiceClient
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<h1>Audio Stream</h1>
+
+<button @onclick="ToggleStreaming">Toggle Streaming</button>
+
+<div>
+    <h3>Received Audio Chunks</h3>
+    <ul>
+        @foreach (var chunk in ReceivedChunks)
+        {
+            <li>@chunk.ChunkNumber</li>
+        }
+    </ul>
+</div>
+
+@code {
+    private List<AudioChunk> ReceivedChunks { get; set; } = new List<AudioChunk>();
+    private bool _isStreaming = false;
+    private IClientStreamWriter<AudioChunk> _requestStream;
+    private IAsyncStreamReader<AudioChunk> _responseStream;
+    private AsyncDuplexStreamingCall<AudioChunk, AudioChunk> _call;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InitializeConnection();
+    }
+
+    private async Task InitializeConnection()
+    {
+        _call = AudioServiceClient.StreamAudio();
+        _requestStream = _call.RequestStream;
+        _responseStream = _call.ResponseStream;
+
+        await foreach (var chunk in _responseStream.ReadAllAsync())
+        {
+            ReceivedChunks.Add(chunk);
+            var data = chunk.Data.ToByteArray();
+            await JS.InvokeVoidAsync("playAudio");
+            StateHasChanged();
+        }
+    }
+
+    private async Task ToggleStreaming()
+    {
+        _isStreaming = !_isStreaming;
+
+        if (_isStreaming)
+        {
+            await StartSendingDummyAudio();
+        }
+        else
+        {
+            await _requestStream.CompleteAsync();
+        }
+    }
+
+    private async Task StartSendingDummyAudio()
+    {
+        for (int i = 0; _isStreaming && i < 10; i++)
+        {
+            var audioChunk = new AudioChunk
+                {
+                    ChunkNumber = i,
+                    Data = Google.Protobuf.ByteString.CopyFrom(new byte[1024]) // Simulate audio data
+                };
+            var returnValue  = await JS.InvokeAsync("playAudio");
+
+            await _requestStream.WriteAsync(audioChunk);
+            await Task.Delay(500); // Simulate delay between chunks
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_call != null)
+        {
+            await _call.RequestStream.CompleteAsync();
+            _call.Dispose();
+        }
+    }
+}

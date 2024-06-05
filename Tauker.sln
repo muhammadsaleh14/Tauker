@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaukerHybrid", "TaukerHybrid\TaukerHybrid.csproj", "{8159FF95-2446-4464-B62A-2EC6870F7C05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp", "BlazorApp\BlazorApp.csproj", "{84B6CBBC-9323-40C8-8E18-79079CCB18A7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorClassLibrary", "RazorClassLibrary\RazorClassLibrary.csproj", "{490E1882-80DB-41E5-9BF8-7D1E9C9B4CF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcService", "GrpcService\GrpcService.csproj", "{4EED47F9-FBDA-42D6-B457-D2A710B76F76}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "WebApii\WebApi.csproj", "{F5E42B72-4FEB-4049-8579-4C9DFBB58267}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorClassLibrary", "RazorClassLibrary\RazorClassLibrary.csproj", "{65FB630A-64F9-4161-BD11-06E06ABC1F88}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedAudioConfig", "SharedAudioConfig\SharedAudioConfig.csproj", "{C10304C7-A9A6-4CBC-B941-9707F6547B41}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,20 +17,22 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8159FF95-2446-4464-B62A-2EC6870F7C05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8159FF95-2446-4464-B62A-2EC6870F7C05}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8159FF95-2446-4464-B62A-2EC6870F7C05}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{8159FF95-2446-4464-B62A-2EC6870F7C05}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8159FF95-2446-4464-B62A-2EC6870F7C05}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8159FF95-2446-4464-B62A-2EC6870F7C05}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{490E1882-80DB-41E5-9BF8-7D1E9C9B4CF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{490E1882-80DB-41E5-9BF8-7D1E9C9B4CF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{490E1882-80DB-41E5-9BF8-7D1E9C9B4CF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{490E1882-80DB-41E5-9BF8-7D1E9C9B4CF7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F5E42B72-4FEB-4049-8579-4C9DFBB58267}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5E42B72-4FEB-4049-8579-4C9DFBB58267}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F5E42B72-4FEB-4049-8579-4C9DFBB58267}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F5E42B72-4FEB-4049-8579-4C9DFBB58267}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84B6CBBC-9323-40C8-8E18-79079CCB18A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84B6CBBC-9323-40C8-8E18-79079CCB18A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84B6CBBC-9323-40C8-8E18-79079CCB18A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84B6CBBC-9323-40C8-8E18-79079CCB18A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EED47F9-FBDA-42D6-B457-D2A710B76F76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EED47F9-FBDA-42D6-B457-D2A710B76F76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EED47F9-FBDA-42D6-B457-D2A710B76F76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EED47F9-FBDA-42D6-B457-D2A710B76F76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65FB630A-64F9-4161-BD11-06E06ABC1F88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65FB630A-64F9-4161-BD11-06E06ABC1F88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65FB630A-64F9-4161-BD11-06E06ABC1F88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65FB630A-64F9-4161-BD11-06E06ABC1F88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C10304C7-A9A6-4CBC-B941-9707F6547B41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C10304C7-A9A6-4CBC-B941-9707F6547B41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C10304C7-A9A6-4CBC-B941-9707F6547B41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C10304C7-A9A6-4CBC-B941-9707F6547B41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

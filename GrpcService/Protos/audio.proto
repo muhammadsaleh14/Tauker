@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcService.Protos";
+
+package audio;
+
+service Audio {
+    rpc StreamAudio(stream AudioChunk) returns (stream AudioChunk);
+}
+
+message AudioChunk {
+    bytes data = 1;
+    int32 chunkNumber = 2;
+}
