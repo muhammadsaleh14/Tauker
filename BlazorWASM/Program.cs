@@ -11,11 +11,16 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
+builder.Services.AddLogging(builder =>
+{
+    builder.AddProvider(new BrowserConsoleLoggerProvider());
+});
+
 builder.Services.AddSingleton(services =>
 {
     // Get the service address from appsettings.json
     var config = services.GetRequiredService<IConfiguration>();
-    var backendUrl = config.GetValue<string>("BackendUrl") ?? "https://localhost:7035"; // Optionally, get from config
+    var backendUrl = "https://localhost:7035"; // Optionally, get from config
 
     // Create a channel with a GrpcWebHandler that is addressed to the backend server.
     //
