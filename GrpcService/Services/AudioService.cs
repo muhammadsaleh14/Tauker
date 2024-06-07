@@ -23,11 +23,8 @@ public class AudioService : Audio.AudioBase
             {
                 foreach (var client in Clients)
                 {
-                    await client.Value.WriteAsync(chunk);
-                    if (client.Key != clientId) // Don't send the chunk back to the sender
-                    {
 
-                    }
+                    await client.Value.WriteAsync(chunk);
                 }
             }
         }

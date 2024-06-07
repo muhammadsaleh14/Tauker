@@ -1,0 +1,21 @@
+﻿@inject IJSRuntime JS
+
+@page "/voicerecorder"
+
+<h3>Voice Recorder with Delay</h3>
+
+<button @onclick="StartRecordingWithDelay">Start Recording with Delay</button>
+<button @onclick="StopRecordingWithDelay">Stop Recording</button>
+
+@code {
+    private async Task StartRecordingWithDelay()
+    {
+        await JS.InvokeVoidAsync("startRecordingWithDelay");
+    }
+
+    private async Task StopRecordingWithDelay()
+    {
+        await JS.InvokeVoidAsync("stopRecordingWithDelay");
+    }
+
+}

@@ -1,0 +1,45 @@
+﻿@using System;
+@using System.IO;
+@using System.Threading.Tasks;
+
+@page "/"
+@inject IJSRuntime js
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+<button @onclick="StartPlayback">Start Playback</button>
+<button @onclick="StopPlayback">Stop Playback</button>
+
+Welcome to your new app.
+
+@code {
+    
+
+    private bool isPlaying = false;
+    private int chunkSize = 1000; // Change this to adjust chunk size in milliseconds
+    private Random random = new Random();
+    
+    private async Task StartPlayback()
+    {
+        isPlaying = true;
+        while (isPlaying)
+        {
+            await js.InvokeVoidAsync("playAudio", GenerateRandomAudioData(chunkSize, random));
+            await Task.Delay(chunkSize);
+        }
+    }
+
+    private void StopPlayback()
+    {
+        isPlaying = false;
+    }
+
+    static byte[] GenerateRandomAudioData(int length, Random random)
+    {
+        byte[] buffer = new byte[length];
+        random.NextBytes(buffer);
+        return buffer;
+    }
+}

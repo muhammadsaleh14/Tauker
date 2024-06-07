@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorClassLibrary", "RazorC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedAudioConfig", "SharedAudioConfig\SharedAudioConfig.csproj", "{C10304C7-A9A6-4CBC-B941-9707F6547B41}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWASM", "BlazorWASM\BlazorWASM.csproj", "{187EDAD2-5A54-43CE-B873-1D77837BD423}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{C10304C7-A9A6-4CBC-B941-9707F6547B41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C10304C7-A9A6-4CBC-B941-9707F6547B41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C10304C7-A9A6-4CBC-B941-9707F6547B41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{187EDAD2-5A54-43CE-B873-1D77837BD423}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{187EDAD2-5A54-43CE-B873-1D77837BD423}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{187EDAD2-5A54-43CE-B873-1D77837BD423}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{187EDAD2-5A54-43CE-B873-1D77837BD423}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

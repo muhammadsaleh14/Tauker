@@ -1,0 +1,67 @@
+@page "/VoiceCall"
+
+@using Google.Protobuf
+@using Grpc.Core
+@using GrpcService.SharedProtos
+@using System.Threading.Tasks;
+@using Grpc.Net.Client;
+
+@inject Audio.AudioClient AudioServiceClient
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<h1>Audio Stream</h1>
+
+
+<button @onclick="ToggleStreaming"> Toggle streaming</button>
+
+@code {
+    private bool _isStreaming = false;
+    private IClientStreamWriter<AudioChunk> _requestStream;
+    private IAsyncStreamReader<AudioChunk> _responseStream;
+    private AsyncDuplexStreamingCall<AudioChunk, AudioChunk> _call;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await JS.InvokeVoidAsync("blazorInterop.registerBlazorMethod", DotNetObjectReference.Create(this));
+    }
+
+
+    private async Task ToggleStreaming()
+    {
+        _isStreaming = !_isStreaming;
+
+        if (_isStreaming)
+        {
+            _call = AudioServiceClient.StreamAudio();
+            _requestStream = _call.RequestStream;
+            _responseStream = _call.ResponseStream;
+            await JS.InvokeVoidAsync("startSendingAudio");
+        }
+        else
+        {
+            await _requestStream.CompleteAsync();
+        }
+    }
+
+    [JSInvokable("invokeSendAudioOverGrpc_Blazor")]
+    private async Task StartSendinAudio(byte[] audioData)
+    {
+        var audioChunk = new AudioChunk
+            {
+                ChunkNumber = 1,
+                Data = ByteString.CopyFrom(audioData) // Simulate audio data
+            };
+        await _requestStream.WriteAsync(audioChunk);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_call != null)
+        {
+            await _call.RequestStream.CompleteAsync();
+            _call.Dispose();
+        }
+    }
+}
+using System.Reflection.Metadata;

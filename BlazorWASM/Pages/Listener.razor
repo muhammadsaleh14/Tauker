@@ -1,0 +1,46 @@
+@page "/listener"
+
+@using Grpc.Core
+@using GrpcService.SharedProtos
+
+@inject Audio.AudioClient AudioServiceClient
+@inject IJSRuntime JS
+
+
+<h1>Listening to Audio</h1>
+
+<div>
+    <h3>Received Audio Chunks</h3>
+    <ul>
+        @foreach (var chunk in ReceivedChunks)
+        {
+            <li>@chunk.ChunkNumber</li>
+        }
+    </ul>
+</div>
+
+@code {
+    private List<AudioChunk> ReceivedChunks { get; set; } = new List<AudioChunk>();
+    private IClientStreamWriter<AudioChunk> _requestStream;
+    private IAsyncStreamReader<AudioChunk> _responseStream;
+    private AsyncDuplexStreamingCall<AudioChunk, AudioChunk> _call;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InitializeConnection();
+    }
+
+    private async Task InitializeConnection()
+    {
+        _call = AudioServiceClient.StreamAudio();
+        _requestStream = _call.RequestStream;
+        _responseStream = _call.ResponseStream;
+
+        await foreach (var chunk in _responseStream.ReadAllAsync())
+        {
+            ReceivedChunks.Add(chunk);
+            var data = chunk.Data.ToByteArray();
+            await JS.InvokeVoidAsync("playAudio", data);
+        }
+    }
+}
