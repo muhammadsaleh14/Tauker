@@ -1,39 +1,41 @@
 ﻿using Grpc.Core;
 using GrpcService.SharedProtos;
+using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
-namespace GrpcService.Services;
-
-public class AudioService : Audio.AudioBase
+namespace GrpcService.Services
 {
-    private static readonly ConcurrentDictionary<string, IServerStreamWriter<AudioChunk>> Clients =
-     new ConcurrentDictionary<string, IServerStreamWriter<AudioChunk>>();
-
-    public override async Task StreamAudio(
-        IAsyncStreamReader<AudioChunk> requestStream,
-        IServerStreamWriter<AudioChunk> responseStream,
-        ServerCallContext context)
+    public class AudioService : Audio.AudioBase
     {
-        var clientId = context.Peer;
-        Clients[clientId] = responseStream;
+        private static readonly ConcurrentDictionary<string, IServerStreamWriter<AudioChunk>> Clients =
+            new ConcurrentDictionary<string, IServerStreamWriter<AudioChunk>>();
 
-        try
+        public override async Task StreamAudio(
+            IAsyncStreamReader<AudioChunk> requestStream,
+            IServerStreamWriter<AudioChunk> responseStream,
+            ServerCallContext context)
         {
+            var clientId = context.Peer;
+            Clients[clientId] = responseStream;
 
-            await foreach (var chunk in requestStream.ReadAllAsync())
+            try
             {
-                foreach (var client in Clients)
+                await foreach (var chunk in requestStream.ReadAllAsync())
                 {
-
-                    await client.Value.WriteAsync(chunk);
+                    Debug.Write("writing to clients" + Clients);
+                    Console.WriteLine("writing to clients" + Clients);
+                    foreach (var client in Clients)
+                    {
+                        await client.Value.WriteAsync(chunk);
+                    }
                 }
             }
-        }
-        finally
-        {
-            Clients.TryRemove(clientId, out _);
+            finally
+            {
+                // Clients.TryRemove(clientId, out _);
+            }
         }
     }
-
 }
-

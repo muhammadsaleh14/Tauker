@@ -1,12 +1,10 @@
 @page "/listener"
-@inject ILogger<Listener> logger
 
 @using Grpc.Core
 @using GrpcService.SharedProtos
 
 @inject Audio.AudioClient AudioServiceClient
 @inject IJSRuntime JS
-
 
 <h1>Listening to Audio</h1>
 
@@ -37,17 +35,29 @@
         _requestStream = _call.RequestStream;
         _responseStream = _call.ResponseStream;
 
-        while (true)
-        {
-            logger.LogInformation("in initialise connection");
+        // Start reading from the response stream
+        _ = ReadResponseStreamAsync();
+    }
 
-            await foreach (var chunk in _responseStream.ReadAllAsync())
+    private async Task ReadResponseStreamAsync()
+    {
+        try
+        {
+            await foreach (AudioChunk audioChunk in _responseStream.ReadAllAsync())
             {
-                ReceivedChunks.Add(chunk);
-                var data = chunk.Data.ToByteArray();
+                Console.WriteLine("reading chunk", audioChunk);
+                ReceivedChunks.Add(audioChunk);
+
+                // Trigger UI update
+
+                var data = audioChunk.Data.ToByteArray();
                 await JS.InvokeVoidAsync("playAudio", data);
+                await InvokeAsync(StateHasChanged);
             }
-            await Task.Delay(500);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error reading stream: {ex.Message}");
         }
     }
 }

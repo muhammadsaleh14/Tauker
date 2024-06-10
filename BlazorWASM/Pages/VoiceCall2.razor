@@ -1,0 +1,73 @@
+@page "/voicecall2"
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<h3>Voice Call</h3>
+<button @onclick="StartRecording">Start Recording</button>
+<button @onclick="StopRecording">Stop Recording</button>
+<br />
+<button @onclick="()=>chatStarted = !chatStarted">Chat Status: @chatStarted</button>
+
+@code {
+    private string chatMessage = "Chat not started.";
+    private bool chatStarted = false;
+    private HubConnection _hubConnection;
+    private bool _isRecording = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hubConnection = new HubConnectionBuilder()
+        .WithUrl(Navigation.ToAbsoluteUri("http://localhost:5051/voiceChatHub"))
+        .Build();
+
+        try
+        {
+            await _hubConnection.StartAsync();
+            Console.WriteLine("SignalR connection started");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error starting SignalR connection: {ex.Message}");
+        }
+
+        _hubConnection.On<string>("ReceiveAudio", async (base64AudioData) =>
+        {
+            Console.WriteLine("Client received audio data");
+            if (chatStarted)
+            {
+                await PlayAudio(base64AudioData);
+            }
+        });
+
+
+    }
+
+    private async Task StartRecording()
+    {
+        _isRecording = true;
+        Console.WriteLine("Recording started");
+        await JS.InvokeVoidAsync("audioRecorder.startRecording", DotNetObjectReference.Create(this));
+    }
+
+    private async Task StopRecording()
+    {
+        _isRecording = false;
+        Console.WriteLine("Recording stopped");
+        await JS.InvokeVoidAsync("audioRecorder.stopRecording");
+    }
+
+    private async Task PlayAudio(string base64AudioData)
+    {
+        Console.WriteLine("Playing audio");
+        await JS.InvokeVoidAsync("audioPlayer.playAudio", base64AudioData);
+    }
+
+    [JSInvokable]
+    public async Task ReceiveAudioData(string base64AudioData)
+    {
+        Console.WriteLine("Received audio data from JS");
+        // Handle received audio data (base64 string) and send it to the server
+        await _hubConnection.SendAsync("SendAudio", base64AudioData);
+    }
+}

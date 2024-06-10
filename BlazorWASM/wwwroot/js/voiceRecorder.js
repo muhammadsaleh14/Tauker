@@ -1,11 +1,11 @@
 ﻿// import { invokeSendAudioOverGrpc_Blazor } from "./blazorInterop";
+let audioContext;
+let mediaStreamSource;
+let delayNode;
+let mediaRecorder;
 
+window.startSendingAudio = async function (instance) {
 
-
-window.startSendingAudio = async function () {
-    let audioContext;
-    let mediaStreamSource;
-    let delayNode;
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -23,21 +23,35 @@ window.startSendingAudio = async function () {
 
     mediaRecorder.addEventListener("dataavailable", event => {
         console.log("data availible")
-        invokeSendAudioOverGrpc_Blazor(event.data)
+        // instance.invokeMethodAsync("StartSendingAudio", event.data)
+        // invokeSendAudioOverGrpc_Blazor(event.data)
+        // var array = Array.from(new Uint8Array(await audioChunks.arrayBuffer()));
+
         audioChunks.push(event.data);
     });
 
-    mediaRecorder.addEventListener("stop", () => {
-        //     const audioBlob = new Blob(audioChunks);
-        //     const audioUrl = URL.createObjectURL(audioBlob);
-        //     const audio = new Audio(audioUrl);
+    mediaRecorder.addEventListener("stop", async () => {
+        console.log("type of audio chunks", typeof audioChunks);
+
+        // Create a single Blob from all audio chunks
+        const audioBlob = new Blob(audioChunks);
+
+        // Convert Blob to ArrayBuffer
+        const arrayBuffer = await audioBlob.arrayBuffer();
+
+        // Convert ArrayBuffer to base64 string
+        const base64String = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+
+        // Call Blazor method with base64 string
+        await instance.invokeMethodAsync("StartSendingAudio", base64String);
+
+        // Reset audioChunks
         audioChunks = [];
-        //     audio.play();
     });
 };
 
 window.stopSendingAudio = function () {
     mediaRecorder.stop();
-    mediaStreamSource.disconnect(delayNode);
-    delayNode.disconnect(audioContext.destination);
+    // mediaStreamSource.disconnect(delayNode);
+    // delayNode.disconnect(audioContext.destination);
 };

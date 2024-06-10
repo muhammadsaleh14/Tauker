@@ -1,4 +1,54 @@
-﻿// function playAudio(audioData) {
+﻿// wwwroot/js/audio.js
+window.audioRecorder = {
+    startRecording: async function (instance) {
+        console.log("Start recording");
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mediaRecorder = new MediaRecorder(stream);
+        let audioChunks = [];
+
+        mediaRecorder.ondataavailable = function (event) {
+            audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = function () {
+            console.log("Recording stopped in JS");
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            const reader = new FileReader();
+            reader.readAsDataURL(audioBlob);
+            reader.onloadend = async function () {
+                const base64String = reader.result.split(',')[1];
+                await instance.invokeMethodAsync("ReceiveAudioData", base64String);
+                // DotNet.invokeMethodAsync('BlazorWASM', '', base64String);
+            };
+        };
+
+        mediaRecorder.start();
+        window.audioRecorder.mediaRecorder = mediaRecorder;
+    },
+    stopRecording: function () {
+        console.log("Stop recording");
+        window.audioRecorder.mediaRecorder.stop();
+    }
+};
+
+window.audioPlayer = {
+    playAudio: async function (base64AudioData) {
+        console.log("Playing audio in JS");
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioBytes = Uint8Array.from(atob(base64AudioData), c => c.charCodeAt(0));
+        const audioBuffer = await audioContext.decodeAudioData(audioBytes.buffer);
+
+        const source = audioContext.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(audioContext.destination);
+        source.start(0);
+    }
+};
+
+
+
+
+// function playAudio(audioData) {
 //     console.log(audioData)
 
 //     var blob = new Blob([1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1]);

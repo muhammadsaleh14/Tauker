@@ -15,16 +15,25 @@
 
 <button @onclick="ToggleStreaming"> Toggle streaming</button>
 
+<h1>Listening to Audio</h1>
+
+<div>
+    <h3>Received Audio Chunks</h3>
+    <ul>
+        @foreach (var chunk in ReceivedChunks)
+        {
+            <li>@chunk.ChunkNumber</li>
+        }
+    </ul>
+</div>
+
 @code {
     private bool _isStreaming = false;
+    private List<AudioChunk> ReceivedChunks { get; set; } = new List<AudioChunk>();
     private IClientStreamWriter<AudioChunk> _requestStream;
     private IAsyncStreamReader<AudioChunk> _responseStream;
     private AsyncDuplexStreamingCall<AudioChunk, AudioChunk> _call;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await JS.InvokeVoidAsync("blazorInterop.registerBlazorMethod", DotNetObjectReference.Create(this));
-    }
 
 
     private async Task ToggleStreaming()
@@ -36,31 +45,53 @@
             _call = AudioServiceClient.StreamAudio();
             _requestStream = _call.RequestStream;
             _responseStream = _call.ResponseStream;
-            await JS.InvokeVoidAsync("startSendingAudio");
+            await JS.InvokeVoidAsync("startSendingAudio", DotNetObjectReference.Create(this));
         }
         else
         {
-            await _requestStream.CompleteAsync();
+            await JS.InvokeVoidAsync("stopSendingAudio");
         }
     }
 
-    [JSInvokable("invokeSendAudioOverGrpc_Blazor")]
-    private async Task StartSendinAudio(byte[] audioData)
+    [JSInvokableAttribute("StartSendingAudio")]
+    public async Task StartSendingAudio(string base64AudioData)
     {
+        Console.WriteLine("start sending audio");
+
+        // Convert base64 string to byte array
+        byte[] audioData = Convert.FromBase64String(base64AudioData);
+
         var audioChunk = new AudioChunk
             {
                 ChunkNumber = 1,
-                Data = ByteString.CopyFrom(audioData) // Simulate audio data
+                Data = ByteString.CopyFrom(audioData)
             };
+
         await _requestStream.WriteAsync(audioChunk);
+
+        await _call.RequestStream.CompleteAsync();
+
+        await foreach (AudioChunk recivedAudioChunk in _responseStream.ReadAllAsync())
+        {
+            Console.WriteLine("reading chunk", recivedAudioChunk);
+            ReceivedChunks.Add(recivedAudioChunk);
+
+            // Trigger UI update
+
+            var data = recivedAudioChunk.Data.ToByteArray();
+            await JS.InvokeVoidAsync("playAudio", data);
+            await InvokeAsync(StateHasChanged);
+        }
+
+
     }
 
     public async ValueTask DisposeAsync()
     {
         if (_call != null)
         {
-            await _call.RequestStream.CompleteAsync();
-            _call.Dispose();
+            @* await _call.RequestStream.CompleteAsync(); *@
+            @* _call.Dispose(); *@
         }
     }
 }

@@ -7,7 +7,7 @@ window.blazorInterop = {
 
     SendAudioOverGrpc_Blazor: function () {
         if (window.blazorInterop.blazorInstance) {
-            window.blazorInterop.blazorInstance.invokeMethodAsync('StartSendinAudio');
+            window.blazorInterop.blazorInstance.invokeMethodAsync('StartSendingAudio');
         }
     }
 };
